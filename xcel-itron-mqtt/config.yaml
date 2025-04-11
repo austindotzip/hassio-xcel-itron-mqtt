@@ -1,7 +1,7 @@
-name: "Xcel iTron MQTT"
+name: "Xcel iTron MQTT (2)"
 description: "Bridge from Xcel iTron smart meters to MQTT"
 url: "https://www.github.com/austindotzip/hassio-xcel-itron-mqtt"
-version: "1.4.2"
+version: "1.4.3"
 slug: "xcel-itron-mqtt2"
 arch:
   - aarch64
