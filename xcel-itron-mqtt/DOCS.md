@@ -1,17 +1,33 @@
-## Configuring Energy Dashboard
+# Xcel iTron MQTT (2) — second-meter instance
 
-[![Open your Home Assistant instance and show your energy configuration panel.](https://my.home-assistant.io/badges/config_energy.svg)](https://my.home-assistant.io/redirect/config_energy/)
+Renamed-slug wrapper around the upstream add-on so a **second** Xcel meter can run
+alongside the primary one (Home Assistant allows only one add-on instance per
+repository — renamed slugs were blessed by the upstream maintainer in
+[wingrunr21/hassio-xcel-itron-mqtt#24](https://github.com/wingrunr21/hassio-xcel-itron-mqtt/issues/24)).
 
-![Eletricity Grid Config](https://raw.githubusercontent.com/wingrunr21/hassio-xcel-itron-mqtt/refs/heads/main/images/electricity_grid.png)
+As of 2.0.0 this builds **stock**
+[zaknye/xcel_itron2mqtt](https://github.com/zaknye/xcel_itron2mqtt) at a pinned SHA
+plus a single build-time patch (`device_name.patch`) that adds the `DEVICE_NAME`
+env var — pending upstream as
+[zaknye/xcel_itron2mqtt#52](https://github.com/zaknye/xcel_itron2mqtt/pull/52).
+When that merges: bump `XCEL_ITRON2MQTT_SHA` in the Dockerfile past the merge,
+delete the patch and its two Dockerfile lines, and this add-on is 100% stock.
 
-1. Open up the [Energy config](https://my.home-assistant.io/redirect/config_energy/) for Home Assistant
-2. Set up the `Grid consumption` sensor to use the value from your meter (usually named `sensor.xcel_itron_5_current_summation_delivered_value`)
-3. If you have solar or a way to return energy to the grid, also set the return sensor (usually named `sensor.xcel_itron_5_current_summation_received_value`)
-4. Optionally, set up the [Electricity Maps (formerly CO2Signal) integration](https://www.home-assistant.io/integrations/co2signal/)
-5. Give Home Assistant some time to collect data and then you should start seeing things populate in your [Energy Dashboard!](https://my.home-assistant.io/redirect/energy/)
+## Configuration
+
+Same options as the upstream add-on, plus:
+
+| Option        | Description | Required | Default |
+| ------------- | ----------- | -------- | ------- |
+| `device_name` | Home Assistant device name and prefix for every entity `unique_id`/MQTT topic. **Must differ from the primary meter's name** (the primary upstream instance uses `Xcel Itron 5`) — the distinct name is what prevents the two meters from colliding. | Yes | `Xcel Itron 5 Floor 2` |
+
+⚠️ Changing `device_name` after entities exist changes every `unique_id` and
+creates new entities — re-point the Energy Dashboard/automations or migrate the
+entity registry (see the cutover runbook).
 
 ## Troubleshooting
 
 ### Summation Delivered Value Stops
 
-This usually means your meter needs restarted. Email Xcel at EnergyLaunchpad@xcelenergy.com and ask that they reboot your meter.
+This usually means your meter needs restarted. Email Xcel at
+EnergyLaunchpad@xcelenergy.com and ask that they reboot your meter.

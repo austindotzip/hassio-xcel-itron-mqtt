@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.0
+
+**BREAKING for this instance's entities — do not update casually; follow the cutover runbook (`~/Code/forks/floor2-cutover-runbook.html`).** Entity `unique_id`s and MQTT topics change from the old LFDI-suffix scheme to `device_name`-prefixed ones (e.g. `xcel_itron_5_floor_2_current_summation_delivered_value`).
+
+- Retire the private `austindotzip/xcel_itron2mqtt` python fork: build **stock** [zaknye/xcel_itron2mqtt](https://github.com/zaknye/xcel_itron2mqtt) at a pinned SHA (`5cefeca`, current main) plus a single build-time patch (`device_name.patch`) adding the `DEVICE_NAME` env var — pending upstream as [zaknye/xcel_itron2mqtt#52](https://github.com/zaknye/xcel_itron2mqtt/pull/52). Once merged, bump the SHA and delete the patch.
+- New **required** `device_name` option (default `Xcel Itron 5 Floor 2`), exported as `DEVICE_NAME`. A distinct name per meter is what prevents unique_id/topic collisions with the primary meter.
+- Sync add-on scaffolding with upstream [wingrunr21/hassio-xcel-itron-mqtt](https://github.com/wingrunr21/hassio-xcel-itron-mqtt): uv-based dependency install from upstream's lockfile, base-python 18.0.0, `mqtt`/`loglevel` options, `ldfi` → `lfdi` config migration.
+- Drop the vendored `openssl.conf` workaround — modern zaknye configures the CCM8 cipher and legacy renegotiation in-process.
+- New sensors on firmware 3.2.50: VAh/VARh, TOU 0–3 WH, Max Demand, Power Factor (overall + per-phase).
+
 ## 1.4.1
 
 - Add log output for MQTT and Meter configuration prior to running
